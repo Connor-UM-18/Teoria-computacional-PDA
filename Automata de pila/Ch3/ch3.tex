@@ -1,0 +1,41 @@
+\chapter{Conclusión}
+
+Durante el desarrollo de este programa de autómata de pila, he logrado comprender en profundidad los conceptos relacionados con los lenguajes contextuales y su análisis. La implementación de este programa me ha permitido explorar la estructura y validación de lenguajes formales, así como comprender la importancia de las estructuras de datos en el análisis sintáctico.\newline
+
+A través de esta experiencia, he aprendido cómo utilizar los autómatas de pila como herramienta fundamental en la teoría de la computación. Estos autómatas tienen una amplia gama de aplicaciones prácticas, como la compilación de lenguajes de programación, el análisis de lenguajes naturales y la verificación de la corrección sintáctica en diversos contextos.\newline
+\\
+
+\section{Problemas iniciales}
+Durante el desarrollo del problema del autómata de pila, se presentaron algunos desafíos iniciales que requirieron atención y resolución. Estos problemas iniciales incluyeron:\newline
+\begin{enumerate}
+    \item Comprender el concepto de autómata de pila: Al inicio, fue necesario comprender en detalle qué es un autómata de pila y cómo funciona. Esto implicó estudiar su estructura, transiciones y comportamiento en la resolución de problemas de lenguajes formales.\newline
+
+        
+    \item Diseñar la estructura de datos adecuada: Para implementar el autómata de pila, fue necesario seleccionar una estructura de datos adecuada que permitiera representar y manipular la pila. Esto implicó evaluar diferentes opciones y elegir la más eficiente y conveniente para el problema en cuestión.\newline
+    
+    \item Definir las reglas de transición: El siguiente desafío fue establecer las reglas de transición del autómata de pila para cada símbolo de entrada. Esto requería comprender las reglas de la gramática y definir correctamente las transiciones en función de los símbolos de entrada y el estado actual del autómata.\newline
+    
+    \item Manejo de casos de error y ambigüedades: Durante la implementación, surgió la necesidad de manejar casos de error y ambigüedades en la entrada. Esto implicó considerar situaciones como símbolos no válidos, cadenas mal formadas o transiciones no definidas, y diseñar mecanismos para manejar estas situaciones de manera adecuada.\newline
+
+\end{enumerate}
+
+
+Enfrentar estos problemas iniciales y abordarlos de manera adecuada fue fundamental para el desarrollo exitoso del problema del autómata de pila. Cada uno de estos desafíos brindó oportunidades para aprender y fortalecer los conocimientos sobre teoría de la computación y lenguajes formales.
+
+
+
+
+\newline
+
+\subsection{Soluciones}
+Se llevó a cabo un estudio detallado del autómata de pila para comprender su funcionamiento y aplicaciones relevantes. Posteriormente, se eligió una estructura de datos adecuada para representar la pila, garantizando eficiencia y facilidad de manipulación.\newline
+
+Se definieron reglas de transición precisas para el autómata, considerando todos los estados, símbolos de entrada y las acciones correspondientes. Además, se implementaron mecanismos para manejar errores y ambigüedades en la entrada, asegurando la validez de los símbolos y la corrección en el procesamiento de las cadenas.\newline
+
+Estas soluciones permitieron superar los desafíos iniciales y lograr una implementación exitosa del autómata de pila en el código proporcionado.\newline 
+\section{Complejidades}
+Supongamos que la longitud de la cadena de entrada es n. En el peor de los casos, el bucle while se ejecutará n + 1 veces, ya que también se ejecuta una vez más después de procesar todos los caracteres de la cadena.\newline 
+
+Dentro del bucle, se realizan operaciones como comprobaciones de pertenencia en un diccionario ((estado\_actual, symbol, cima\_de\_pila) in PDA), acceso a elementos de diccionario (transiciones = PDA$[$(estado\_actual, symbol, cima\_de\_pila)$]$), operaciones de pila (pila.pop(), $pila.append(letra\_apuntada)$), concatenación de cadenas (''.join(pila)), y asignaciones de variables. Estas operaciones tienen una complejidad constante, es decir, no dependen del tamaño de la cadena de entrada.\newline 
+
+Por lo tanto, la complejidad total de la función proceso\_recorrido sin graficar es lineal, O(n), donde n es la longitud de la cadena de entrada.

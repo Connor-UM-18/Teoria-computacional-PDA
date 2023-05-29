@@ -1,0 +1,363 @@
+\chapter{Anexos}
+\lstset{
+    language=C,
+    basicstyle=\ttfamily\small\color{black},
+    numbers=left,
+    numberstyle=\tiny,
+    stepnumber=1,
+    numbersep=8pt,
+    backgroundcolor=\color{white},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    frame=single,
+    rulecolor=\color{magenta},
+    tabsize=2,
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=false,
+    title=\lstname,
+    escapeinside={\%*}{*)},
+    keywordstyle=\color{blue},
+    commentstyle=\color{red},
+    stringstyle=\color{orange},
+    morecomment=[l][\color{red}]{\#},
+    otherkeywords={=,!,<,>,*,+,-,&,|,^,~},
+    numbers=left,                   % Coloca los números de línea a la izquierda
+    numberstyle=\tiny\color{black}, % Estilo de los números de línea
+    stepnumber=1,    % Incremento en el que se muestran los números de línea
+    numbersep=8pt
+}
+\section{PDA.py}
+Se presenta el código implementado para la solución al problema con extensión .py . \newline
+\\
+\begin{lstlisting}
+#Teoria de la computacion
+#Automata de pila
+#Alumno: Connor Urbano Mendoza
+
+import random
+from PIL import Image, ImageDraw,ImageFont
+import sys
+
+# Tamaño de la imagen y tamaño del cuadrado
+image_size = (400, 400)
+square_size = 100
+
+# Crear una imagen en blanco
+image = Image.new("RGB", image_size, "white")
+draw = ImageDraw.Draw(image)
+
+
+
+# Definir el PDA con sus transiciones
+PDA = {
+    ('q', '0', 'Z0'): [('q', 'X')],
+    ('q', '0', 'X'): [('q', 'X')],
+    ('q', '1', 'X'): [('p', '')],
+    ('p', '1', 'X'): [('p', 'Z0')],
+    ('p', '', 'Z0'): [('f', 'Z0')]
+}
+
+#Funcion de recorrido sin graficar
+def proceso_recorrido(cadena,estado,i):
+    ruta_archivo = "C:\\Users\\soyco\\OneDrive\\Documents\\ESCOM\\sem4\\Teoria\\P2\\Prog4\\output\\trancisiones.txt"
+    with open(ruta_archivo, "w") as archivo:
+        estado_actual=estado
+        
+        while i < (len(cadena)+1):
+            if i == (len(cadena)):
+                symbol=''
+            else:
+                symbol = cadena[i]
+            cadena_pila = ''.join(pila)
+
+            cima_de_pila = pila[-1]
+            archivo.write("("+estado_actual+","+symbol+","+cadena_pila+") |-")
+            if (estado_actual, symbol, cima_de_pila) in PDA:
+                transiciones = PDA[(estado_actual, symbol, cima_de_pila)]
+                estado_siguiente = transiciones[0][0]  
+                letra_apuntada = transiciones[0][1]
+                if(letra_apuntada == ''):
+                    cima_de_pila = pila.pop()
+                elif(letra_apuntada == 'Z0'):
+                    cima_de_pila = pila.pop()
+                else:
+                    pila.append(letra_apuntada)
+                    
+                estado_actual=estado_siguiente
+                i += 1
+            else:
+                archivo.write("Error")
+                return False
+        archivo.write("("+estado_actual+","+symbol+","+cadena_pila+")")    
+        return True    
+#Funcion de recorrido para graficar
+def proceso_recorrido2(cadena,estado,i):
+    
+    ruta_archivo = "C:\\Users\\soyco\\OneDrive\\Documents\\ESCOM\\sem4\\Teoria\\P2\\Prog4\\output\\trancisiones.txt"
+    with open(ruta_archivo, "w") as archivo:
+        estado_actual=estado
+        cadena_grafica = cadena
+            
+        while i < (len(cadena)+1):
+
+            # Coordenadas del rectángulo
+            rect_width = 40
+            rect_height = 140
+            x1 = ((image_size[0] - rect_width) // 2)
+            desplazamientoa_abajo=60
+            y1 = ((image_size[1] - rect_height) // 2) +desplazamientoa_abajo
+            x2 = x1 + rect_width
+            y2 = y1 + rect_height
+            
+            # Dibujar el rectángulo en la imagen
+            draw.rectangle([(x1, y1), (x2, y2)], outline="black")
+            #----------Dibujamos apartados-------------------------
+            # Dibujamos apartados de cadena ingresada
+            text = "Cadena ingresada:"
+            font = ImageFont.truetype("arial.ttf", 16)
+
+            # Dibujar el texto en la imagen
+            draw.text((50, 40), text, fill="black", font=font)
+            
+            # Dibujar ecadenal texto en la imagen 
+            draw.text((200, 40), cadena, fill="black", font=font) 
+            
+            
+            # Dibujamos apartados de por ingresar
+            text = "Por ingresar:"
+
+            # Dibujar el texto en la imagen
+            draw.text((50, 60), text, fill="black", font=font)
+            
+            #Dibujamos primer caracter
+            j=0
+            
+            cadena_grafica = cadena_grafica[1:]  # Obtener la subcadena sin la primera letra
+            draw.text((209, 61), cadena_grafica, fill="black", font=font)
+            # Dibujamos apartados de entrada
+            text = "Entrada:"
+            font2 = ImageFont.truetype("arial.ttf", 20)
+
+            # Dibujar el texto en la imagen
+            draw.text((50, 90), text, fill="black", font=font2)
+            
+            #Coordenada de incremento para cruces
+            cross_y = (((y1 + y2) // 2)+50) - ((i+1)*19)
+            #Dibujamos caso base
+            draw.text((189, (((y1 + y2) // 2)+50)), "Z0", fill="blue", font=font2)
+            
+            
+            if i == (len(cadena)):
+                symbol=''
+                #Dibujamos primer caracter y la entrada
+                # Dibujar el texto en la imagen
+                draw.text((140, 91), "' '", fill="green", font=font2)
+                draw.text((200, 61), "Vacio (E)", fill="red", font=font)
+                #Dibujamos felcha de conversion
+                draw.text((155, 91), "—>", fill="black", font=font2)
+            else:
+                symbol = cadena[i]
+                number=int(symbol)
+                # Dibujar el texto en la imagen
+                draw.text((140, 91), symbol, fill="red", font=font2)
+                draw.text((200, 61), symbol, fill="red", font=font)
+                #Dibujamos felcha de conversion
+                draw.text((155, 91), "—>", fill="black", font=font2)
+                
+            cadena_pila = ''.join(pila)
+            cima_de_pila = pila[-1]
+            
+            archivo.write("("+estado_actual+","+symbol+","+cadena_pila+") |-")
+            if (estado_actual, symbol, cima_de_pila) in PDA:
+                transiciones = PDA[(estado_actual, symbol, cima_de_pila)]
+                estado_siguiente = transiciones[0][0]  
+                letra_apuntada = transiciones[0][1]
+                if(letra_apuntada == ''):
+                    cima_de_pila = pila.pop()
+                    #Dibujamos letra
+                    draw.text((197, 91), "-X", fill="blue", font=font2)
+                    draw.text((197, 125), "^", fill="red", font=font2)
+                    draw.text((199, 141), "|", fill="red", font=font2)
+                    if len(cadena) % 2 != 0:
+                        cross_y = ((((y1 + y2) // 2)+50) - ((i+1)*19)-19)
+                    else:
+                        cross_y = (((y1 + y2) // 2)+50) - ((i+1)*19)
+                    # Coordenadas de la última cruz agregada
+                    last_cross_x = 200
+                    
+                    last_cross_y = cross_y + ((38*i)-(19*len(cadena)))
+                    last_cross_size = 12
+
+                    # Guardar las coordenadas y el tamaño de la última cruz
+                    last_cross_coords = [((last_cross_x - last_cross_size)-1, last_cross_y + 21), ((last_cross_x + last_cross_size)+1, (last_cross_y + 37)+1)]
+                    # Eliminar la última cruz
+                    draw.rectangle(last_cross_coords, outline="white", fill="white")
+                    
+                elif(letra_apuntada == 'Z0' and number==1 and symbol!=''):
+                    cima_de_pila = pila.pop()
+                    #Dibujamos letra
+                    draw.text((197, 91), "-X", fill="blue", font=font2)
+                    draw.text((197, 125), "^", fill="red", font=font2)
+                    draw.text((199, 141), "|", fill="red", font=font2)
+                    if len(cadena) % 2 != 0:
+                        cross_y = ((((y1 + y2) // 2)+50) - ((i+1)*19)-19)
+                    else:
+                        cross_y = (((y1 + y2) // 2)+50) - ((i+1)*19)
+                    # Coordenadas de la última cruz agregada
+                    last_cross_x = 200
+                    #print(cross_y)
+                    last_cross_y = cross_y + ((38*i)-(19*len(cadena)))
+                    last_cross_size = 12
+
+                    # Guardar las coordenadas y el tamaño de la última cruz
+                    last_cross_coords = [((last_cross_x - last_cross_size)-1, last_cross_y + 21), ((last_cross_x + last_cross_size)+1, (last_cross_y + 37)+1)]
+                    # Eliminar la última cruz
+                    draw.rectangle(last_cross_coords, outline="white", fill="white")
+                elif(letra_apuntada == 'Z0' and symbol==''):
+                    cima_de_pila = pila.pop()
+                    #Dibujamos letra
+                    draw.text((197, 91), "Z0", fill="blue", font=font2)
+                    draw.text((197, 125), "^", fill="red", font=font2)
+                    draw.text((199, 141), "|", fill="red", font=font2)
+                    # Coordenadas de la última cruz agregada
+                    last_cross_x = 200
+                    #print(cross_y)
+                    last_cross_y = cross_y + ((38*i)-(19*len(cadena)))
+                    last_cross_size = 12
+
+                    # Guardar las coordenadas y el tamaño de la última cruz
+                    last_cross_coords = [((last_cross_x - last_cross_size)-1, last_cross_y + 21), ((last_cross_x + last_cross_size)+1, (last_cross_y + 37)+1)]
+                    # Eliminar la última cruz
+                    draw.rectangle(last_cross_coords, outline="white", fill="white")
+                else:
+                    pila.append(letra_apuntada)
+                    #Dibujamos letra
+                    draw.text((197, 91), letra_apuntada, fill="blue", font=font2)
+                    draw.text((201, 121), "|", fill="green", font=font2)
+                    draw.text((197, 141), "V", fill="green", font=font2)
+                    #Dibujamos cruz
+                    draw.text((194, cross_y), "X", fill="black", font=font2)
+                    
+                estado_actual=estado_siguiente
+                
+                # Guardar la imagen en la ruta especificada
+                image.save("C:\\Users\\soyco\\OneDrive\\Documents\\ESCOM\\sem4\\Teoria\\P2\\Prog4\\output\\animacion.png")
+                if sys.stdin.isatty():
+                    print("Presiona Enter para continuar...")
+                    sys.stdin.readline()
+                else:
+                    input("Presiona Enter para continuar...")
+                i += 1
+            else:
+                archivo.write("Error")
+                #Dibujamos letra
+                # Cadena invalida
+                draw.text((200, 40), cadena, fill="red", font=font) 
+                draw.text((197, 91), "ERROR", fill="blue", font=font2)
+                
+                image.save("C:\\Users\\soyco\\OneDrive\\Documents\\ESCOM\\sem4\\Teoria\\P2\\Prog4\\output\\animacion.png")
+                if sys.stdin.isatty():
+                    print("Presiona Enter para continuar...")
+                    sys.stdin.readline()
+                else:
+                    input("Presiona Enter para continuar...")
+                return False
+            
+            # Aquí se realiza el borrado del contenido de la imagen
+            draw.rectangle([(11, 11), (389, 180)], fill="white")
+            image.save("C:\\Users\\soyco\\OneDrive\\Documents\\ESCOM\\sem4\\Teoria\\P2\\Prog4\\output\\animacion.png")
+
+            
+        archivo.write("("+estado_actual+","+symbol+","+cadena_pila+")")    
+        
+        # Coordenadas del rectángulo
+        rect_width = 40
+        rect_height = 140
+        x1 = ((image_size[0] - rect_width) // 2)
+        desplazamientoa_abajo=60
+        y1 = ((image_size[1] - rect_height) // 2) +desplazamientoa_abajo
+        x2 = x1 + rect_width
+        y2 = y1 + rect_height
+        
+        # Dibujar el rectángulo en la imagen
+        draw.rectangle([(x1, y1), (x2, y2)], outline="black")
+        
+        # Dibujamos apartados de cadena ingresada
+        text = "Cadena ingresada:"
+        font = ImageFont.truetype("arial.ttf", 16)
+
+        # Dibujar el texto en la imagen
+        draw.text((50, 40), text, fill="black", font=font)
+        
+        # Dibujar ecadenal texto en la imagen 
+        draw.text((200, 40), cadena, fill="green", font=font) 
+        
+        text = "Estado Final"
+
+        # Dibujar el texto en la imagen
+        draw.text((50, 60), text, fill="black", font=font)
+        
+        # Dibujamos apartados de entrada
+        text = "Ya sacamos a Z0"
+        # Dibujar el texto en la imagen
+        draw.text((50, 92), text, fill="black", font=font)
+        #Dibujamos felcha de conversion
+        draw.text((178, 91), "——>", fill="black", font=font2)
+                
+        
+        draw.text((235, 91), "Z0", fill="blue", font=font2)
+        
+        image.save("C:\\Users\\soyco\\OneDrive\\Documents\\ESCOM\\sem4\\Teoria\\P2\\Prog4\\output\\animacion.png")
+        if sys.stdin.isatty():
+            sys.stdin.readline()
+        else:
+            input("Presiona Enter para continuar...")
+        return True    
+
+def generar_cadena_aleatoria(tamanio):
+    mitad = tamanio // 2
+    ceros = '0' * mitad
+    unos = '1' * mitad
+    if tamanio % 2 != 0:
+        ceros += random.choice(['0', '1'])
+    cadena = ceros + unos
+    return cadena
+    
+    
+#Main
+pila = []
+
+elemento_superior = 'Z0'
+pila.append(elemento_superior)
+estado = 'q'
+i = 0
+
+cadena = input("Ingresa una cadena (o presiona Enter para generar una cadena aleatoria): ")
+
+if not cadena:
+    tamanio = random.randint(1, 100000)
+    print(tamanio)
+    cadena = generar_cadena_aleatoria(tamanio)
+    resultado = proceso_recorrido(cadena, estado, i)
+
+    if resultado:
+        print("La cadena es válida.")
+    else:
+        print("La cadena no es válida.")
+    
+else:
+    resultado = proceso_recorrido2(cadena, estado, i)
+
+    if resultado:
+        print("La cadena es válida.")
+    else:
+        print("La cadena no es válida.")
+    
+\end{lstlisting}
+
+Se presenta el código LaTeX de este archivo mediante el siguiente link:\newline
+\\
+Link overleaf: $"$\url{https://www.overleaf.com/read/tpnhwgwdrprq}$"$\newline
+Link github: $"$\url{https://github.com/Connor-UM-18/Teoria-computacional-PDA.git}$"$\newline
